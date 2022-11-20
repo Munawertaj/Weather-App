@@ -17,6 +17,8 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   // ___________________________________________________________________________ Geolocation
+  var iconId;
+  var iconImg;
   Position? position;
   void getLocation() async {
     var permission = await Geolocator.requestPermission();
@@ -109,7 +111,15 @@ class _MyAppState extends State<MyApp> {
                           }
                           lat = (position?.latitude).toString();
                           lon = (position?.longitude).toString();
-                          setState(() {});
+                          setState(() {
+                            iconId = weatherModel?.weather?[0].icon;
+                            if (iconId == null)
+                              iconImg =
+                                  "http://openweathermap.org/img/wn/10d@2x.png";
+                            else
+                              iconImg =
+                                  "http://openweathermap.org/img/wn/${iconId}@2x.png";
+                          });
                         },
                       ),
                     ),
@@ -141,14 +151,14 @@ class _MyAppState extends State<MyApp> {
                     color: Colors.black),
               ),
             ),
-            // _________________________________________________________________ VIEW WEATHER
+            // _________________________________________________________________ Search
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
               child: SizedBox(
                 width: 500,
                 height: 57.0,
                 child: ElevatedButton.icon(
-                  icon: const Icon(Icons.search_sharp, size: 30),
+                  icon: const Icon(Icons.search, size: 30),
                   label: const Text('Search'),
                   onPressed: () async {
                     weatherModel =
@@ -162,7 +172,14 @@ class _MyAppState extends State<MyApp> {
                     }
                     lat = (weatherModel?.coord?.lat).toString();
                     lon = (weatherModel?.coord?.lon).toString();
-                    setState(() {});
+                    setState(() {
+                      iconId = weatherModel?.weather?[0].icon;
+                      if (iconId == null)
+                        iconImg = "http://openweathermap.org/img/wn/10d@2x.png";
+                      else
+                        iconImg =
+                            "http://openweathermap.org/img/wn/${iconId}@2x.png";
+                    });
                   },
                   style: ElevatedButton.styleFrom(
                     primary: Color.fromARGB(248, 16, 155, 121),
@@ -187,6 +204,18 @@ class _MyAppState extends State<MyApp> {
                     color: Colors.black),
               ),
             ),
+            //__________________________________________________________________ Weather Icon
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Center(
+                child: Image.network(
+                  (iconImg == null
+                      ? "http://openweathermap.org/img/wn/10d@2x.png"
+                      : iconImg),
+                ),
+              ),
+            ),
+
             // _________________________________________________________________ Temperature
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 20, 10, 10),
@@ -207,12 +236,27 @@ class _MyAppState extends State<MyApp> {
               child: Text(
                 "Humidity                          ${weatherModel?.main?.humidity}%",
                 style: TextStyle(
-                    height: 1,
-                    fontSize: 20,
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black),
+                  height: 1,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  // color: Colors.black
+                ),
               ),
             ),
+            // _________________________________________________________________ Pressure
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: Text(
+                "Pressure                          ${weatherModel?.main?.pressure}",
+                style: TextStyle(
+                  height: 1,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w400,
+                  // color: Colors.black
+                ),
+              ),
+            ),
+
             // _________________________________________________________________ Sunset & Sunrise images
             Padding(
               padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
